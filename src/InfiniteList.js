@@ -53,7 +53,7 @@ var InfiniteList = function (listConfig) {
         itemsRenderer = new ListItemsRenderer(domElement, scrollElement, config, loadMoreCallback);
         if (config.useNativeScroller) {
             scroller = new NativeScroller(
-                rootElement,
+                (config.useNativeScroller instanceof Element) ? config.useNativeScroller : rootElement,
                 function (top) {
                     topOffset = (top || 0);
                     needsRender = true;
