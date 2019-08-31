@@ -30,8 +30,8 @@ function getFPS(){
     return measuredFPS;
 }
 
-module.exports = {
+export default {
     startAnimationLoop: startAnimationLoop,
     stopAnimationLoop: stopAnimationLoop,
     getFPS: getFPS
-}
+};

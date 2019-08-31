@@ -1,4 +1,4 @@
-var StyleHelpers = require('./StyleHelpers');
+import StyleHelpers from './StyleHelpers';
 
 var NativeScroller = function (scrollElement, callback) {
 
@@ -18,4 +18,4 @@ var NativeScroller = function (scrollElement, callback) {
     }
 }
 
-module.exports = NativeScroller;
+export default NativeScroller;

@@ -1,11 +1,11 @@
+/* global require, module, __dirname */
+var path = require('path');
+var webpack = require('webpack');
+
 module.exports = {
-    entry: {
-        app: ['./src/InfiniteList.js']
-    },
-    output: {
-        path: './dist',
-        filename: 'InfiniteList.js',
-        library: "InfiniteList",
-        libraryTarget: "umd"
-    }
+  entry: './src/InfiniteList.js',
+  output: {
+    filename: 'infinite-list.js',
+    path: path.join(__dirname, '/dist')
+  }
 };

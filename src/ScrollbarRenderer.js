@@ -1,4 +1,4 @@
-var StyleHelpers = require('./StyleHelpers');
+import StyleHelpers from './StyleHelpers';
 
 var ScrollbarRenderer = function(rootElement){
     var scrollbar = document.createElement('div'),
@@ -37,5 +37,5 @@ var ScrollbarRenderer = function(rootElement){
     }
 };
 
-module.exports = ScrollbarRenderer;
+export default ScrollbarRenderer;
 

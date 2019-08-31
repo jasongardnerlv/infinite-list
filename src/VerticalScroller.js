@@ -207,4 +207,4 @@ var VerticalScroller = function (parentElement, callback) {
     }
 };
 
-module.exports = VerticalScroller;
+export default VerticalScroller;

@@ -16,7 +16,7 @@ var applyElementStyle = function (element, styleObj) {
         applyElementStyle(element, styleObject);
 };
 
-module.exports = {
+export default {
     applyElementStyle: applyElementStyle,
     applyTransformStyle: applyTransformStyle
 };

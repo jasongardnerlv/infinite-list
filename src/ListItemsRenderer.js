@@ -1,8 +1,7 @@
-var Layer = require('./Layer'),
-    LayersPool = require('./LayerPool'),
-    AnimationFrameHelper = require('./AnimationFrameHelper'),
-    MIN_FPS = 30,
-    MAX_TIME_PER_FRAME = 1000 / MIN_FPS;
+import Layer from './Layer';
+import LayersPool from './LayerPool';
+import AnimationFrameHelper from './AnimationFrameHelper';
+var MIN_FPS = 30, MAX_TIME_PER_FRAME = 1000 / MIN_FPS;
 
 var ListItemsRenderer = function(attachedElement, scrollElement, listConfig, pageCallback){
 
@@ -210,4 +209,4 @@ var ListItemsRenderer = function(attachedElement, scrollElement, listConfig, pag
     };
 };
 
-module.exports = ListItemsRenderer;
+export default ListItemsRenderer;

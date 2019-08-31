@@ -1,4 +1,4 @@
-var StyleHelpers = require('./StyleHelpers');
+import StyleHelpers from './StyleHelpers';
 
 var Layer = function (parentElement) {
     var listItemElement = null,
@@ -75,4 +75,4 @@ var Layer = function (parentElement) {
     }
 };
 
-module.exports = Layer;
+export default Layer;

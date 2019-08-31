@@ -1,11 +1,10 @@
-var VerticalScroller = require('./VerticalScroller'),
-    NativeScroller = require('./NativeScroller'),
-    ScrollbarRenderer = require('./ScrollbarRenderer'),
-    AnimationFrameHelper = require('./AnimationFrameHelper'),
-    ListItemsRenderer = require('./ListItemsRenderer'),
-    StyleHelpers = require('./StyleHelpers'),
-    DEFAULT_ITEM_HEIGHT = 2,
-    RESIZE_CHECK_INTERVAL = 1000;
+import VerticalScroller from './VerticalScroller';
+import NativeScroller from './NativeScroller';
+import ScrollbarRenderer from './ScrollbarRenderer';
+import AnimationFrameHelper from './AnimationFrameHelper';
+import ListItemsRenderer from './ListItemsRenderer';
+import StyleHelpers from './StyleHelpers';
+var DEFAULT_ITEM_HEIGHT = 2, RESIZE_CHECK_INTERVAL = 1000;
 
 var InfiniteList = function (listConfig) {
 
@@ -329,4 +328,4 @@ var InfiniteList = function (listConfig) {
 
 };
 
-module.exports = InfiniteList;
+export default InfiniteList;
