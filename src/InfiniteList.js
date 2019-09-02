@@ -76,7 +76,7 @@ var InfiniteList = function (listConfig) {
             );
         }
 
-        runAnimationLoop();
+        runAnimationLoop(true);
         refresh();
         return this;
     }
