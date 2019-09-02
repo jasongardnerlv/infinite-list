@@ -87,7 +87,7 @@ var InfiniteList = function (listConfig) {
     }
 
     var lastResizeCheck = 0;
-    function runAnimationLoop(){
+    function runAnimationLoop(isFirstLoop){
         AnimationFrameHelper.startAnimationLoop(function(){
            if (needsRender) {
                 render();
@@ -97,13 +97,14 @@ var InfiniteList = function (listConfig) {
                if (now - lastResizeCheck > RESIZE_CHECK_INTERVAL) {
                    parentElementHeight = parentElement.clientHeight;
                    lastResizeCheck = now;
-                   if (parentElementHeight != parentElement.clientHeight || parentElementWidth != parentElement.clientWidth) {
+                   if (parentElementHeight != parentElement.clientHeight || parentElementWidth != parentElement.clientWidth || isFirstLoop) {
                        topOffset = rootElement.scrollTop;
                        refresh();
                    } else  if (config.useNativeScroller && topOffset != rootElement.scrollTop) {
                        topOffset = rootElement.scrollTop;
                        render();
                    }
+                   isFirstLoop = false;
                }
            }
         });
