@@ -75,7 +75,7 @@ var InfiniteList = function (listConfig) {
             listItemsHeights[i] = config.itemHeightGetter && config.itemHeightGetter(i) || listItemsHeights[i] || 200;
         }
         if (config.hasMore) {
-            listItemsHeights[config.itemsCount] = 200;
+            listItemsHeights[config.itemsCount] = config.itemHeightGetter && config.itemHeightGetter(i) ||  200;
         }
     }
 
