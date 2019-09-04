@@ -93,7 +93,7 @@ var ListItemsRenderer = function(attachedElement, scrollElement, listConfig, pag
         //find bottom visible item
         var bottomVisibleItem = renderedListItems[0];
         for (var i=0; i < renderedListItems.length; ++i) {
-            if (renderedListItems[i].getItemOffset() + renderedListItems[i].getItemHeight() >= topOffset + visibleHeight) {
+            if (renderedListItems[i].getItemOffset() + renderedListItems[i].getItemHeight() >= topOffset + visibleHeight || i === renderedListItems.length - 1) {
                 bottomVisibleItem = renderedListItems[i];
                 break;
             }
