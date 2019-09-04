@@ -1,7 +1,5 @@
-import VerticalScroller from './VerticalScroller';
 import NativeScroller from './NativeScroller';
 import ScrollbarRenderer from './ScrollbarRenderer';
-import AnimationFrameHelper from './AnimationFrameHelper';
 import ListItemsRenderer from './ListItemsRenderer';
 import StyleHelpers from './StyleHelpers';
 var DEFAULT_ITEM_HEIGHT = 2, RESIZE_CHECK_INTERVAL = 1000;
@@ -18,9 +16,10 @@ var InfiniteList = function (listConfig) {
                 domElement.innerHTML = '<div style="margin-left:14px;height:50px">Loading...</div>';
             },
             hasMore: false,
-            useNativeScroller: false,
+            scroller: null,
             itemsCount: 0
         },
+        resizeObserver = null,
         parentElement = null,
         parentElementHeight,
         parentElementWidth,
@@ -32,8 +31,7 @@ var InfiniteList = function (listConfig) {
         listItemsHeights = [],
         topOffset = 0,
         scrollToIndex = 0,
-        topItemOffset = 0,
-        needsRender = true;
+        topItemOffset = 0;
 
     for (var key in listConfig){
         if (listConfig.hasOwnProperty(key)){
@@ -47,67 +45,29 @@ var InfiniteList = function (listConfig) {
         config.hasMore = initialPageConfig.hasMore || false;
     }
 
-    function attach(domElement, touchProvider){
+    function attach(domElement) {
         parentElement = domElement;
         initializeRootElement(domElement);
         itemsRenderer = new ListItemsRenderer(domElement, scrollElement, config, loadMoreCallback);
-        if (config.useNativeScroller) {
-            scroller = new NativeScroller(
-                (config.useNativeScroller instanceof Element) ? config.useNativeScroller : rootElement,
-                function (top) {
-                    topOffset = (top || 0);
-                    needsRender = true;
-                }
-            );
-        } else {
-            scrollbarRenderer = new ScrollbarRenderer(rootElement);
-            scroller = new VerticalScroller(
-                parentElement,
-                function (top) {
-                    topOffset = (top || 0);
-                    needsRender = true;
-                },
-                touchProvider
-            );
+        scroller = new NativeScroller(config.scroller || rootElement, function (top) {
+                topOffset = (top || 0);
 
-            scroller.setDimensions(
-                Number.MIN_SAFE_INTEGER,
-                Number.MAX_SAFE_INTEGER
-            );
-        }
+                render();
+            }
+        );
 
-        runAnimationLoop(true);
-        refresh();
+        resizeObserver = new ResizeObserver(debounce(50, () => {
+          refresh();
+        }));
+        resizeObserver.observe(parentElement);
+
         return this;
     }
 
     function detach() {
-        AnimationFrameHelper.stopAnimationLoop();
+        resizeObserver.disconnect();
+        scroller.detach();
         parentElement.removeChild(rootElement);
-    }
-
-    var lastResizeCheck = 0;
-    function runAnimationLoop(isFirstLoop){
-        AnimationFrameHelper.startAnimationLoop(function(){
-           if (needsRender) {
-                render();
-            }
-            else {
-               var now = Date.now();
-               if (now - lastResizeCheck > RESIZE_CHECK_INTERVAL) {
-                   parentElementHeight = parentElement.clientHeight;
-                   lastResizeCheck = now;
-                   if (parentElementHeight != parentElement.clientHeight || parentElementWidth != parentElement.clientWidth || isFirstLoop) {
-                       topOffset = rootElement.scrollTop;
-                       refresh();
-                   } else  if (config.useNativeScroller && topOffset != rootElement.scrollTop) {
-                       topOffset = rootElement.scrollTop;
-                       render();
-                   }
-                   isFirstLoop = false;
-               }
-           }
-        });
     }
 
     function calculateHeights(fromIndex) {
@@ -122,7 +82,7 @@ var InfiniteList = function (listConfig) {
     function initializeRootElement(parentElement) {
         scrollElement = document.createElement('div');
         StyleHelpers.applyElementStyle(scrollElement, {
-            position: config.useNativeScroller ? 'relative' : 'absolute',
+            position: 'relative',
             width: '100%'
         });
 
@@ -131,7 +91,7 @@ var InfiniteList = function (listConfig) {
             position: 'relative',
             height: '100%',
             width: '100%',
-            overflowY : config.useNativeScroller ? 'scroll' : 'hidden',
+            overflowY : 'auto',
             "-webkit-overflow-scrolling": "touch"
         });
         rootElement.appendChild(scrollElement);
@@ -170,12 +130,7 @@ var InfiniteList = function (listConfig) {
         if (scrollbarRenderer) {
             scrollbarRenderer.refresh();
         }
-
-        if (initialPage && !config.useNativeScroller) {
-            scrollToItem(topListItemIndex, false, differenceFromTop);
-        }
-
-        needsRender = true;
+        render();
     }
 
     function updateScroller() {
@@ -193,27 +148,20 @@ var InfiniteList = function (listConfig) {
                 maxScrollerOffset =  lastRenderedItem.getItemOffset() + lastRenderedItem.getItemHeight() - parentElementHeight;
         }
 
-        if (config.useNativeScroller) {
-            var totalHeight = 0;
-            listItemsHeights.forEach(function(h){
-                totalHeight += h;
-            });
-            StyleHelpers.applyElementStyle(scrollElement, {
-                height: totalHeight + 'px'
-            });
-        } else {
-            scroller.setDimensions(minScrollerOffset, maxScrollerOffset);
-        }
+        var totalHeight = 0;
+        listItemsHeights.forEach(function(h){
+            totalHeight += h;
+        });
+        StyleHelpers.applyElementStyle(scrollElement, {
+            height: totalHeight + 'px'
+        });
     }
 
     function render() {
         var renderedItems;
 
         updateScroller();
-        if (!config.useNativeScroller) {
-            StyleHelpers.applyTransformStyle(scrollElement, 'matrix3d(1,0,0,0,0,1,0,0,0,0,1,0,0' + ',' + (-topOffset) + ', 0, 1)');
-        }
-        needsRender = itemsRenderer.render(topOffset, scrollToIndex, topItemOffset, listItemsHeights);
+        var needsRender = itemsRenderer.render(topOffset, scrollToIndex, topItemOffset, listItemsHeights);
         renderedItems = itemsRenderer.getRenderedItems();
 
         scrollToIndex = null;
@@ -240,7 +188,6 @@ var InfiniteList = function (listConfig) {
             }
         }
 
-
         var avarageItemHeight = 0,
             itemsCount = 0;
         for (var i=0; i<listItemsHeights.length; ++i) {
@@ -254,6 +201,10 @@ var InfiniteList = function (listConfig) {
         if (scrollbarRenderer) {
             scrollbarRenderer.render(avarageItemHeight * renderedItems[0].getItemIndex() + topOffset - renderedItems[0].getItemOffset(), avarageItemHeight * config.itemsCount);
         }
+        if (needsRender) {
+
+          render();
+        }
     }
 
     function loadMoreCallback(onComplete){
@@ -262,10 +213,6 @@ var InfiniteList = function (listConfig) {
             config.itemsCount += pageItemsCount;
             calculateHeights(config.itemsCount - pageItemsCount);
             scroller.scrollTo(itemsRenderer.getRenderedItems()[itemsRenderer.getRenderedItems().length - 1].getItemOffset() - parentElementHeight);
-            //scroller.scrollTo(itemsRenderer.getRenderedItems()[itemsRenderer.getRenderedItems()[0].getItemOffset()]);
-            if (config.useNativeScroller) {
-
-            }
             onComplete();
         });
     }
@@ -317,6 +264,16 @@ var InfiniteList = function (listConfig) {
                 }
             }
         }
+    }
+
+    function debounce(ms, fn) {
+        let timer;
+        return function() {
+            clearTimeout(timer);
+            const args = Array.prototype.slice.call(arguments);
+            args.unshift(this);
+            timer = setTimeout(fn.bind.apply(fn, args), ms);
+        };
     }
 
     return {

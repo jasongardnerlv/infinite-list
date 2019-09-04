@@ -136,7 +136,7 @@ var ListItemsRenderer = function(attachedElement, scrollElement, listConfig, pag
     function renderAfter(listItem){
         var newItem = renderListItem(listItem.getItemIndex() + 1);
         if (newItem) {
-            newItem.setItemOffset(listItem.getItemOffset() + listItem.getItemHeight());            
+            newItem.setItemOffset(listItem.getItemOffset() + listItem.getItemHeight());
             renderedListItems.push(newItem);
         }
         return newItem;
@@ -167,13 +167,13 @@ var ListItemsRenderer = function(attachedElement, scrollElement, listConfig, pag
         }
         //index, topOffset, renderer, width, height, itemIdentifier
         var itemHeight = !listConfig.recalculateItemHeights && listConfig.itemHeightGetter && listConfig.itemHeightGetter(index);
-        layer.attach(index, listConfig.useNativeScroller ? 0 : 13, itemHeight, layerIdentifier);
+        layer.attach(index, 0, itemHeight, layerIdentifier);
         //listItems.push(layer);
         return layer;
     }
 
-    function renderLoadMore(){        
-        if (renderedListItems.length == 0 || renderedListItems[renderedListItems.length - 1].getIdentifier() != '$LoadMore') {            
+    function renderLoadMore(){
+        if (renderedListItems.length == 0 || renderedListItems[renderedListItems.length - 1].getIdentifier() != '$LoadMore') {
             var loadMoreLayer = borrowLayerForIndex(listConfig.itemsCount, '$LoadMore');
             listConfig.loadMoreRenderer(listConfig.itemsCount, loadMoreLayer.getDomElement());
             if (!loading) {
