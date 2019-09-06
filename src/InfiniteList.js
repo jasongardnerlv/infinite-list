@@ -56,8 +56,9 @@ var InfiniteList = function (listConfig) {
             }
         );
 
-        resizeObserver = new ResizeObserver(debounce(50, () => {
-          refresh();
+        resizeObserver = new ResizeObserver(debounce(50, entries => {
+          if (lastContentHeight !== entries[0].contentRect.height) refresh();
+          lastContentHeight = entries[0].contentRect.height;
         }));
         resizeObserver.observe(parentElement);
 
