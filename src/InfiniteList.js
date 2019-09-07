@@ -31,7 +31,8 @@ var InfiniteList = function (listConfig) {
         listItemsHeights = [],
         topOffset = 0,
         scrollToIndex = 0,
-        topItemOffset = 0;
+        topItemOffset = 0,
+        lastContentHeight = 0;
 
     for (var key in listConfig){
         if (listConfig.hasOwnProperty(key)){
