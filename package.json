@@ -32,7 +32,8 @@
   },
   "homepage": "http://roeierez.github.io/infinite-list/",
   "devDependencies": {
-    "jsx-loader": "^0.12.2",
-    "webpack": "^1.6.0"
-  }
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
+  },
+  "dependencies": {}
 }
