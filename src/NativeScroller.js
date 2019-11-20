@@ -15,8 +15,7 @@ var NativeScroller = function (scrollElement, callback) {
             });
         },
         scrollTo: function(y){
-            if (scrollElement.scrollTop > y || y > (scrollElement.scrollTop + scrollElement.offsetHeight))
-                scrollElement.scrollTop = y;
+            scrollElement.scrollTop = y;
         },
         detach: function(){
             scrollElement.removeEventListener('scroll', boundHandler);

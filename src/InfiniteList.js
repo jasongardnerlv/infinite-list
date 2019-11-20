@@ -214,8 +214,8 @@ var InfiniteList = function (listConfig) {
             config.hasMore = hasMore;
             config.itemsCount += pageItemsCount;
             calculateHeights(config.itemsCount - pageItemsCount);
-            scroller.scrollTo(itemsRenderer.getRenderedItems()[itemsRenderer.getRenderedItems().length - 1].getItemOffset() - parentElementHeight);
             onComplete();
+            render();
         });
     }
 
