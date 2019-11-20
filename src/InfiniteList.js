@@ -15,6 +15,7 @@ var InfiniteList = function (listConfig) {
             loadMoreRenderer: function(index, domElement){
                 domElement.innerHTML = '<div style="margin-left:14px;height:50px">Loading...</div>';
             },
+            renderComplete: null,
             hasMore: false,
             scroller: null,
             itemsCount: 0
@@ -203,6 +204,7 @@ var InfiniteList = function (listConfig) {
         if (scrollbarRenderer) {
             scrollbarRenderer.render(avarageItemHeight * renderedItems[0].getItemIndex() + topOffset - renderedItems[0].getItemOffset(), avarageItemHeight * config.itemsCount);
         }
+        if (config.renderComplete) config.renderComplete();
         if (needsRender) {
 
           render();
@@ -219,7 +221,7 @@ var InfiniteList = function (listConfig) {
         });
     }
 
-    function scrollToItem(index, animate, relativeOffset) {
+    function scrollToItem(index, evenIfVisible, animate, relativeOffset) {
         var targetPosition = 0;
         if (config.itemHeightGetter) {
             for (var i=0; i<index; ++i){
@@ -229,7 +231,7 @@ var InfiniteList = function (listConfig) {
             scrollToIndex = index;
         }
         topItemOffset = relativeOffset || 0;
-        scroller.scrollTo( targetPosition, config.itemHeightGetter && animate);
+        scroller.scrollTo(targetPosition, evenIfVisible, config.itemHeightGetter && animate);
     }
 
     function refreshItemHeight(index){
