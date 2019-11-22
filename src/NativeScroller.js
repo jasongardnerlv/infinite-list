@@ -6,6 +6,11 @@ var NativeScroller = function (scrollElement, callback) {
         callback(scrollElement.scrollTop);
     };
 
+    var ensureScrollTo = function(y, prev){
+        scrollElement.scrollTop = y;
+        if (scrollElement.scrollTop === prev) setTimeout(() => ensureScrollTo(y, prev), 50);
+    };
+
     scrollElement.addEventListener('scroll', boundHandler);
 
     return {
@@ -15,8 +20,8 @@ var NativeScroller = function (scrollElement, callback) {
             });
         },
         scrollTo: function(y, force){
-            if (scrollElement.scrollTop > y || y > (scrollElement.scrollTop + scrollElement.offsetHeight)) scrollElement.scrollTop = y;
-            else if (force) scrollElement.scrollTop = y;
+            if (scrollElement.scrollTop === y) return;
+            if (force || scrollElement.scrollTop > y || y > (scrollElement.scrollTop + scrollElement.offsetHeight)) ensureScrollTo(y, scrollElement.scrollTop);
         },
         detach: function(){
             scrollElement.removeEventListener('scroll', boundHandler);
